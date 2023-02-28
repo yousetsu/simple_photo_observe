@@ -48,10 +48,8 @@ class _AlbumSelScreenState extends State<AlbumSelScreen> {
       child: adWidget,
     );
     return Scaffold(
-      appBar: AppBar(title: const Text('設定'),backgroundColor: const Color(0xFF6495ed),),
+      appBar: AppBar(title: const Text('アルバム'),backgroundColor: const Color(0xFF6495ed),),
       body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-
         children:  <Widget>[
           Padding(padding: EdgeInsets.all(30)),
           adContainer,
@@ -62,7 +60,7 @@ class _AlbumSelScreenState extends State<AlbumSelScreen> {
         currentIndex: 1,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(label:'ホーム', icon: Icon(Icons.home)),
-          BottomNavigationBarItem(label:'アルバム', icon: Icon(Icons.album)),
+          BottomNavigationBarItem(label:'アルバム', icon: Icon(Icons.list)),
         ],
         onTap: (int index) {
           if (index == 0) {Navigator.pushNamed(context, '/');}

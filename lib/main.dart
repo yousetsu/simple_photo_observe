@@ -5,6 +5,7 @@ import './const.dart';
 import './albumSel.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 List<Map> map_stretchlist = <Map>[];
 
@@ -74,6 +75,12 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 class _MainScreenState extends State<MainScreen> with RouteAware {
+  List<XFile>? _imageFileList;
+  dynamic _pickImageError;
+  void _setImageFileListFromFile(XFile? value) {
+    _imageFileList = value == null ? null : <XFile>[value];
+  }
+  final ImagePicker picker = ImagePicker();
   @override
   void initState() {
     super.initState();
@@ -108,20 +115,35 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
     return Scaffold(
       appBar: AppBar(title: const Text('らくらく写真観察'),
         backgroundColor: const Color(0xFF6495ed),),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
+      body: Center(
+        child:Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
           //  _listHeader(),
           const Padding(padding: EdgeInsets.all(10)),
+           ElevatedButton(
+               style: ElevatedButton.styleFrom(foregroundColor: Colors.white, backgroundColor: Colors.lightBlueAccent, padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 80),),
+               onPressed: () async {
+                 runCamera();
+               },
+             child: Text('撮影', style: const TextStyle(fontSize: 35.0, color: Colors.white,),),
+           ),
+            const Padding(padding: EdgeInsets.all(10)),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(foregroundColor: Colors.white, backgroundColor: Colors.lightBlueAccent, padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 80),),
+              onPressed: () async {
 
+              },
+              child: Text('フォルダ選択', style: const TextStyle(fontSize: 30.0, color: Colors.white,),),
+            ),
         ],
       ),
-
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(label:'ホーム', icon: Icon(Icons.home)),
-          BottomNavigationBarItem(label:'アルバム', icon: Icon(Icons.album)),
+          BottomNavigationBarItem(label:'アルバム', icon: Icon(Icons.list)),
         ],
         onTap: (int index) {
           if (index == 1) {
@@ -138,5 +160,25 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
   void init() async {
     // await  testEditDB();
   }
+  void runCamera() async{
+    try {
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+              // maxWidth: maxWidth,
+              // maxHeight: maxHeight,
+              // imageQuality: quality,
+            );
+      if(pickedFile != null) {
+        setState(() {_setImageFileListFromFile(pickedFile);});
 
+      }else{
+
+      }
+
+    } catch (e) {
+      setState(() {
+        _pickImageError = e;
+      });
+    }
+  }
 }

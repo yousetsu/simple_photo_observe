@@ -3,6 +3,7 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 import './const.dart';
 import './albumSel.dart';
+import './albumSet.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,20 +97,17 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
     }
   }
-
   @override
   void dispose() {
     // routeObserverから自身を外す(didPopのため)
     routeObserver.unsubscribe(this);
     super.dispose();
   }
-
   @override
   void didPopNext() {
     // 再描画
     init();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,7 +151,6 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       ),
     );
   }
-
   /*------------------------------------------------------------------
 初期処理
  -------------------------------------------------------------------*/
@@ -171,10 +168,14 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
       if(pickedFile != null) {
         setState(() {_setImageFileListFromFile(pickedFile);});
 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AlbumSetScreen(cnsModePhoto,pickedFile)),
+        );
+
       }else{
 
       }
-
     } catch (e) {
       setState(() {
         _pickImageError = e;

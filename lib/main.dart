@@ -7,6 +7,7 @@ import './albumSet.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 List<Map> map_stretchlist = <Map>[];
 
@@ -166,11 +167,14 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
               // imageQuality: quality,
             );
       if(pickedFile != null) {
-        setState(() {_setImageFileListFromFile(pickedFile);});
+        Uint8List buffer = await pickedFile.readAsBytes();
+        await ImageGallerySaver.saveImage(buffer, name: pickedFile.name);
+        DateTime dtNowTime = DateTime.now();
+      //  setState(() {_setImageFileListFromFile(pickedFile);});
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AlbumSetScreen(cnsModePhoto,pickedFile)),
+          MaterialPageRoute(builder: (context) => AlbumSetScreen(cnsModePhoto,pickedFile,dtNowTime)),
         );
 
       }else{

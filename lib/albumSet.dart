@@ -134,18 +134,24 @@ class _AlbumSetScreenState extends State<AlbumSetScreen> {
     String dbPath = await getDatabasesPath();
     String path = p.join(dbPath, 'internal_assets.db');
     Database database = await openDatabase(path, version: 1,);
-    List<Map> mapSetting = await database.rawQuery("SELECT MAX(photoNo) maxPhotoNo FROM photoList Where = $albumNo");
+    List<Map> mapSetting = await database.rawQuery("SELECT MAX(photoNo) maxPhotoNo FROM photoList Where albumNo = $albumNo");
     for(Map item in mapSetting){
-         maxNo = item['maxPhotoNo'];
+         maxNo = (item['maxPhotoNo'] != null)?(item['maxPhotoNo']):0;
     }
     return maxNo;
   }
   Future<void> insPhotoList(int albumNo,int photoNo, DateTime dtNowTime ,XFile? imageFile) async{
     String dbPath = await getDatabasesPath();
     String query = '';
+    String strLocation = "";
     String path = p.join(dbPath, 'internal_assets.db');
+    if(imageFile != null) {
+//      strLocation = '${imageFile.path.toString()}\\${imageFile.name.toString()}';
+      strLocation = '${imageFile.path.toString()}';
+
+    }
     Database database = await openDatabase(path, version: 1,);
-    query = 'INSERT INTO photoList(albumNo,photoNo,datetime,photoLocation,photoName,kaku1,kaku2,kaku3,kaku4) values($albumNo,$photoNo,"${dtNowTime.toString()}","格納場所","",null,null,null,null) ';
+    query = 'INSERT INTO photoList(albumNo,photoNo,datetime,photoLocation,photoName,kaku1,kaku2,kaku3,kaku4) values($albumNo,$photoNo,"${dtNowTime.toString()}","$strLocation","",null,null,null,null) ';
     await database.transaction((txn) async {
       await txn.rawInsert(query);
     });

@@ -5,6 +5,8 @@ import './const.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+
 class AlbumSelScreen extends StatefulWidget {
   const AlbumSelScreen({Key? key}) : super(key: key); //コンストラクタ
   @override
@@ -12,6 +14,7 @@ class AlbumSelScreen extends StatefulWidget {
 }
 class _AlbumSelScreenState extends State<AlbumSelScreen> {
   //変数の宣言
+  List<Map> mapPhotoGallery = <Map>[];
   File? image;
   final picker = ImagePicker();
   String strPath = '';
@@ -54,19 +57,40 @@ class _AlbumSelScreenState extends State<AlbumSelScreen> {
     );
     return Scaffold(
       appBar: AppBar(title: const Text('アルバム'),backgroundColor: const Color(0xFF6495ed),),
-      body: Column(
-        children:  <Widget>[
-          Padding(padding: EdgeInsets.all(30)),
-          image == null ? const Text('画像が選択されてません') : Container(//三項演算子
-            height: 200,//画像の高さを設定
-            width: 200,//画像の幅を設定
-            child: Image.file(image!, fit: BoxFit.cover),//画像を表示
-          ),
-
-          adContainer,
+      body:
+      ListView(
+        cacheExtent: 0.0,
+        children: [
+          for(Map mapGalleryItem in mapPhotoGallery)...[
+            Text(mapGalleryItem['datetime'].toString(), style: const TextStyle(fontSize: 30.0, color: Colors.black,),),
+            ElevatedButton(
+              onPressed: () async {
+            //    runCamera();
+              },
+            // SizedBox(
+            //   // 画像の高さを指定
+            //   height: 200.0,
+            //   width: 200.0,
+              child:Image.file(File(mapGalleryItem['photoLocation'].toString())!),
+            //),
+            ),
+            const Divider(),
+          ],
         ],
-
       ),
+      // Column(
+      //   children:  <Widget>[
+      //     Padding(padding: EdgeInsets.all(30)),
+      //     image == null ? const Text('画像が選択されてません') : Container(//三項演算子
+      //       height: 200,//画像の高さを設定
+      //       width: 200,//画像の幅を設定
+      //       child: Image.file(image!, fit: BoxFit.cover),//画像を表示
+      //     ),
+      //
+      //     adContainer,
+      //   ],
+      //
+      // ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
         items: const <BottomNavigationBarItem>[
@@ -109,10 +133,8 @@ class _AlbumSelScreenState extends State<AlbumSelScreen> {
      String dbPath = await getDatabasesPath();
      String path = p.join(dbPath, 'internal_assets.db');
      Database database = await openDatabase(path, version: 1,);
-     List<Map> mapSetting = await database.rawQuery("SELECT photoLocation From photoList limit 1");
-     for(Map item in mapSetting){
-       strPath = item['photoLocation'];
-     }
+     mapPhotoGallery = await database.rawQuery("SELECT * From photoList");
+
   }
 
 }
